@@ -1,64 +1,93 @@
 package com.example.paint.Shapes;
 
 public class Ellipse implements Shape {
-    float x,y,strokewidth,scalex,scaley,rotation_angle;
+    double x, y, strokeWidth, scaleX, scaleY, rotation_angle,radiusX,radiusY;
     int id;
-    String fill,type,stroke;
-    @Override
-    public void draw() {
-        System.out.println("its Ellipce");
+    String fill, type, stroke;
+    boolean draggable;
+
+    public Ellipse() {
     }
 
-    public float getX() {
+    public Ellipse(double x, double y, double strokeWidth, double scaleX, double scaleY, double rotation_angle, double radiusX, double radiusY, int id, String fill, String type, String stroke, boolean draggable) {
+        this.x = x;
+        this.y = y;
+        this.strokeWidth = strokeWidth;
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
+        this.rotation_angle = rotation_angle;
+        this.radiusX = radiusX;
+        this.radiusY = radiusY;
+        this.id = id;
+        this.fill = fill;
+        this.type = type;
+        this.stroke = stroke;
+        this.draggable = draggable;
+    }
+
+    @Override
+    public void draw() {
+        System.out.println("its ellipse");
+    }
+
+    @Override
+    public void settype(String s) {
+        this.type=s;
+    }
+
+    public double getX() {
         return x;
     }
 
-    public void setX(float x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    public float getY() {
+    public double getY() {
         return y;
     }
 
-    public void setY(float y) {
+    public void setY(double y) {
         this.y = y;
     }
 
-    public float getStrokewidth() {
-        return strokewidth;
+    public double getStrokeWidth() {
+        return strokeWidth;
     }
 
-    public void setStrokewidth(float strokewidth) {
-        this.strokewidth = strokewidth;
+    public void setStrokeWidth(double strokeWidth) {
+        this.strokeWidth = strokeWidth;
     }
 
-    public float getScalex() {
-        return scalex;
-    }
 
-    public void setScalex(float scalex) {
-        this.scalex = scalex;
-    }
 
-    public float getScaley() {
-        return scaley;
-    }
-
-    public void setScaley(float scaley) {
-        this.scaley = scaley;
-    }
-
-    public float getRotation_angle() {
+    public double getRotation_angle() {
         return rotation_angle;
     }
 
-    public void setRotation_angle(float rotation_angle) {
+    public void setRotation_angle(double rotation_angle) {
         this.rotation_angle = rotation_angle;
     }
 
     public int getId() {
         return id;
+    }
+
+    @Override
+    public Shape clone() {
+        return new Ellipse(this.x,
+        this.y,
+        this.strokeWidth,
+        this.scaleX,
+        this.scaleY,
+        this.rotation_angle,
+        this.radiusX,
+        this.radiusY ,
+        this.id ,
+        this.fill,
+        this.type,
+        this.stroke,
+        this.draggable);
     }
 
     public void setId(int id) {
@@ -73,11 +102,11 @@ public class Ellipse implements Shape {
         this.fill = fill;
     }
 
-    public String gettype() {
+    public String getType() {
         return type;
     }
 
-    public void settype(String type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -87,5 +116,45 @@ public class Ellipse implements Shape {
 
     public void setStroke(String stroke) {
         this.stroke = stroke;
+    }
+
+    public boolean isDraggable() {
+        return draggable;
+    }
+
+    public void setDraggable(boolean draggable) {
+        this.draggable = draggable;
+    }
+
+    public double getScaleX() {
+        return scaleX;
+    }
+
+    public void setScaleX(double scaleX) {
+        this.scaleX = scaleX;
+    }
+
+    public double getScaleY() {
+        return scaleY;
+    }
+
+    public void setScaleY(double scaleY) {
+        this.scaleY = scaleY;
+    }
+
+    public double getRadiusX() {
+        return radiusX;
+    }
+
+    public void setRadiusX(double radiusX) {
+        this.radiusX = radiusX;
+    }
+
+    public double getRadiusY() {
+        return radiusY;
+    }
+
+    public void setRadiusY(double radiusY) {
+        this.radiusY = radiusY;
     }
 }

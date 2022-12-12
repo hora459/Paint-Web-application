@@ -6,16 +6,19 @@ import com.example.paint.Factory.ShapeFactory;
 import com.example.paint.Shapes.Shape;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.web.bind.annotation.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.beans.XMLEncoder;
+import java.beans.XMLDecoder;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
@@ -23,14 +26,12 @@ import java.util.Stack;
 @CrossOrigin()
 @RestController
 @RequestMapping("/paint")
-public class control {
+public class control{
 
 
     private Stack<Integer> undo = new Stack<>();
     private Stack<Integer> redo = new Stack<>();
     Stack<Shape> s=new Stack<>();
-
-    //private Map<Integer, Pair<Stack<Shape>, Stack<Shape>>> objects = new HashMap<>();
     private Map<Integer,Object>cur=new HashMap<>();
     private Stack<Map<Integer,Object>> u_object=new Stack<>();
     private Stack<Map<Integer,Object>> r_object=new Stack<>();
@@ -38,7 +39,9 @@ public class control {
     @RequestMapping( value = "/add/{type}/{id}",method = RequestMethod.POST)
     @ResponseBody
     public Stack<Map<Integer,Object>> addshape(@RequestBody String  inputData , @PathVariable String type, @PathVariable int id){
+
         JSONObject jsonObj = new JSONObject(inputData);
+        System.out.println(jsonObj);
         Shape shape =factory.getshape(jsonObj,type);
         shape.settype(type);
         undo.push(id);
@@ -48,14 +51,11 @@ public class control {
         u_object.push(new_state);
         r_object.clear();
         redo.clear();
-        System.out.println(jsonObj);
-        shape.draw();
         return u_object;
     }
     @RequestMapping( value = "/modify/{type}/{id}",method = RequestMethod.POST)
     @ResponseBody
     public Stack<Map<Integer,Object>> modifysape(@RequestBody String  inputData , @PathVariable String type, @PathVariable int id){
-        System.out.println(id);
         org.json.JSONObject jsonObj = new JSONObject(inputData);
         Shape shape =factory.getshape(jsonObj,type);
         shape.settype(type);
@@ -67,8 +67,6 @@ public class control {
         u_object.push(mod);
         r_object.clear();
         redo.clear();
-        System.out.println(jsonObj);
-        shape.draw();
         return u_object;
     }
     @RequestMapping( value = "/delete/{id}",method = RequestMethod.POST)
@@ -76,83 +74,154 @@ public class control {
     public Stack<Map<Integer,Object>> delete(@PathVariable int id) throws NullPointerException,JSONException{
         if(undo.empty())
             return null;
+        Map<Integer,Object> map=new HashMap<>();
         cur.remove(id);
-        u_object.push(cur);
+        map.putAll(cur);
+        u_object.push(map);
+        undo.push(id);
         r_object.clear();
+        redo.clear();
         return u_object;
     }
-
-
 
     @RequestMapping( value = "/undo",method = RequestMethod.POST)
     @ResponseBody
     public Stack<Map<Integer,Object>> undo() throws NullPointerException,JSONException{
-        if(undo.empty())
-            return null;
-        cur.remove(undo.peek());
-        redo.push(undo.pop());
-        r_object.push(u_object.pop());
+        if(u_object.empty()||undo.empty()) return null;
+        cur.clear();
+        Map<Integer, Object> map = new HashMap<>();
+        map.putAll(u_object.pop());
+        if(!u_object.empty())cur.putAll(u_object.peek());
+        else cur.clear();
+        r_object.push(map);
+        int i=undo.pop();
+        redo.push(i);
         return u_object;
     }
     @RequestMapping( value = "/redo",method = RequestMethod.POST)
     @ResponseBody
     public Stack<Map<Integer,Object>> redo()throws NullPointerException,JSONException{
-        if(redo.empty())
+        if(redo.empty()||r_object.empty())
             return null;
-        cur.put(redo.peek(),r_object.peek().get(redo.peek()));
-        undo.push(redo.pop());
-        u_object.push(r_object.pop());
+        Object obj;
+        obj=r_object.peek().get(redo.peek());
+        cur.put(redo.peek(),r_object.peek());
+        Map<Integer, Object> map = new HashMap<>();
+        map.putAll(r_object.pop());
+        u_object.push(map);
+        int i=redo.pop();
+        undo.push(i);
 
-        return u_object;
+
+        return u_object ;
     }
-    @RequestMapping( value = "/save",method = RequestMethod.POST)
+    @RequestMapping( value = "/save/{t}",method = RequestMethod.POST)
     @ResponseBody
-    public Result save(@RequestBody String path )throws NullPointerException,JSONException{
-        System.out.println(u_object.peek());
+    public Result save(@RequestBody String path ,@PathVariable boolean t)throws NullPointerException,JSONException{
+
+        if(t){
+            try{
+                FileOutputStream file=new FileOutputStream(new File(path));
+                XMLEncoder encoder=new XMLEncoder(file);
+                for (Map.Entry<Integer,Object> entry : cur.entrySet()) {
+                    encoder.writeObject(entry.getValue());
+                }
+                encoder.close();
+                file.close();
+            }
+            catch (IOException ex)
+            {ex.printStackTrace();}
+        }
+        else {
         JSONObject jsonObject = new JSONObject(u_object.peek());
         try {
-            System.out.println(path);
             FileWriter file = new FileWriter(path);
             file.write(jsonObject.toString());
             file.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace();}
         }
-        System.out.println("JSON file created: "+jsonObject);
         return new Result("Saved correctly",true);
     }
-    @RequestMapping( value = "/load",method = RequestMethod.POST)
+
+
+
+    @RequestMapping( value = "/load/{t}",method = RequestMethod.POST)
     @ResponseBody
-    public Map<Integer,Object> load(@RequestBody String path )throws NullPointerException,JSONException{
-        JSONParser parser = new JSONParser();
+    public Map<Integer,Object> load(@RequestBody String path, @PathVariable boolean t)throws NullPointerException, JSONException,
+            ParserConfigurationException, IOException, SAXException,ArrayIndexOutOfBoundsException{
+
+        Map<Integer,Object> mp=new HashMap<>();
+        if(t){
+            try {
+                FileInputStream f1 = new FileInputStream(path);
+                DocumentBuilderFactory fact=DocumentBuilderFactory.newInstance();
+                DocumentBuilder build= fact.newDocumentBuilder();
+                Document doc= build.parse(f1);
+                NodeList nlist=doc.getElementsByTagName("int");
+                int size=nlist.getLength();
+                FileInputStream f2 = new FileInputStream(path);
+                XMLDecoder mydecoder = new XMLDecoder(f2);
+                while(size!=0) {
+                    Shape result = (Shape) mydecoder.readObject();
+                    mp.put(result.getId(),result);
+                    result.draw();
+                    size--;}
+                Map<Integer,Object>new_map=new HashMap<>();
+                cur.putAll(mp);
+                new_map.putAll(cur);
+                u_object.push(new_map);
+                mydecoder.close();
+                f2.close();}
+            catch (ArrayIndexOutOfBoundsException e) {
+            e.printStackTrace();
+        }}
+        else{
         ObjectMapper mapper = new ObjectMapper();
-        Map<Integer,Object> userData = null;
         try {
             File fileObj = new File(path);
             if(fileObj==null) return null;
-            userData = mapper.readValue(
+            mp = mapper.readValue(
                     fileObj, new TypeReference<Map<Integer,Object>>() {
                     });
-            cur.putAll(userData);
-            u_object.push(cur);
-            System.out.println(userData);
+            Map<Integer,Object>new_map=new HashMap<>();
+            cur.putAll(mp);
+            new_map.putAll(cur);
+            u_object.push(new_map);
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        return userData;
+        }}
+        return mp;
     }
 
     @RequestMapping(value = "/restart", method = RequestMethod.POST)
     @ResponseBody
     public Result restart() {
+        cur.clear();
         u_object.clear();
         r_object.clear();
         undo.clear();
         redo.clear();
         return new Result("The app is restarted",true);
     }
-
+    @RequestMapping(value = "/clone/{id}/{id1}", method = RequestMethod.POST)
+    @ResponseBody
+    public Shape clone(@PathVariable int id,@PathVariable int id1){
+        Shape shape= (Shape) cur.get(id);
+        System.out.println(id1);
+        Shape cloned=shape.clone();
+        cloned.setId(id1);
+        cloned.setX(cloned.getX()+50);
+        cloned.setY(cloned.getY()+50);
+        System.out.println(cloned);
+        cur.put(id1,cloned);
+        u_object.push(cur);
+        undo.push(id1);
+        redo.clear();
+        r_object.clear();
+        return cloned;
+    }
 
 
 }

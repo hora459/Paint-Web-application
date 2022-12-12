@@ -1,73 +1,102 @@
 package com.example.paint.Shapes;
 
+import java.util.Arrays;
+
 public class Circle implements Shape {
-    float radius,x,y,strokewidth,scalex,scaley,rotation_angle;
+    double radius,x,y,strokeWidth,scaleX,scaleY;
     int id;
     String fill,type,stroke;
+
+    public Circle(double radius, double x, double y, double strokeWidth, double scaleX, double scaleY, int id, String fill, String type, String stroke) {
+        this.radius = radius;
+        this.x = x;
+        this.y = y;
+        this.strokeWidth = strokeWidth;
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
+        this.id = id;
+        this.fill = fill;
+        this.type = type;
+        this.stroke = stroke;
+    }
+
+    public Circle() {
+    }
+
 
     @Override
     public void draw() {
         System.out.println("its circle");}
 
+    @Override
+    public void settype(String s) {
+        this.type=s;
+    }
 
-    public float getRadius() {
+    public double getRadius() {
         return radius;
     }
 
-    public void setRadius(float radius) {
+    public void setRadius(double radius) {
         this.radius = radius;
     }
 
-    public float getX() {
+    public double getX() {
         return x;
     }
 
-    public void setX(float x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    public float getY() {
+    public double getY() {
         return y;
     }
 
-    public void setY(float y) {
+    public void setY(double y) {
         this.y = y;
     }
 
-    public float getStrokewidth() {
-        return strokewidth;
+    public double getStrokeWidth() {
+        return strokeWidth;
     }
 
-    public void setStrokewidth(float strokewidth) {
-        this.strokewidth = strokewidth;
+    public void setStrokeWidth(double strokeWidth) {
+        this.strokeWidth = strokeWidth;
     }
 
-    public float getScalex() {
-        return scalex;
+    public double getScaleX() {
+        return scaleX;
     }
 
-    public void setScalex(float scalex) {
-        this.scalex = scalex;
+    public void setScaleX(double scaleX) {
+        this.scaleX = scaleX;
     }
 
-    public float getScaley() {
-        return scaley;
+    public double getScaleY() {
+        return scaleY;
     }
 
-    public void setScaley(float scaley) {
-        this.scaley = scaley;
-    }
-
-    public float getRotation_angle() {
-        return rotation_angle;
-    }
-
-    public void setRotation_angle(float rotation_angle) {
-        this.rotation_angle = rotation_angle;
+    public void setScaleY(double scaleY) {
+        this.scaleY = scaleY;
     }
 
     public int getId() {
         return id;
+    }
+
+    @Override
+    public Shape clone() {
+        return new Circle(this.radius,
+        this.x,
+        this.y,
+        this.strokeWidth,
+        this.scaleX,
+        this.scaleY ,
+        this.id ,
+        this.fill,
+        this.type,
+        this.stroke);
     }
 
     public void setId(int id) {
@@ -82,11 +111,11 @@ public class Circle implements Shape {
         this.fill = fill;
     }
 
-    public String gettype() {
+    public String getType() {
         return type;
     }
 
-    public void settype(String type) {
+    public void setType(String type) {
         this.type = type;
     }
 

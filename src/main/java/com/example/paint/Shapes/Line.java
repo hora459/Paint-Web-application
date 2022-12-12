@@ -1,77 +1,85 @@
 package com.example.paint.Shapes;
 
 public class Line implements Shape {
-    float [] point;
-    float x,y,length,strokewidth,scalex,scaley,rotation_angle;
+    double [] points;
+    double x,y,strokeWidth,scaleX,scaleY,rotation_angle;
     String fill,type,stroke;
     int id;
+
+    public Line() {
+    }
+
+    public Line(double[] points, double x, double y, double strokeWidth, double scaleX, double scaleY, double rotation_angle, String fill, String type, String stroke, int id) {
+        this.points = points;
+        this.x = x;
+        this.y = y;
+        this.strokeWidth = strokeWidth;
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
+        this.rotation_angle = rotation_angle;
+        this.fill = fill;
+        this.type = type;
+        this.stroke = stroke;
+        this.id = id;
+    }
 
     @Override
     public void draw() {
         System.out.println("its line");
     }
 
-    public float[] getPoint() {
-        return point;
+    @Override
+    public void settype(String s) {
+        this.type=s;
     }
 
-    public void setPoint(float[] point) {
-        this.point = point;
-    }
 
-    public float getX() {
+
+    public double getX() {
         return x;
     }
 
-    public void setX(float x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    public float getY() {
+    public double getY() {
         return y;
     }
 
-    public void setY(float y) {
+    public void setY(double y) {
         this.y = y;
     }
 
-    public float getLength() {
-        return length;
+    public double getStrokeWidth() {
+        return strokeWidth;
     }
 
-    public void setLength(float length) {
-        this.length = length;
+    public void setStrokeWidth(double strokeWidth) {
+        this.strokeWidth = strokeWidth;
     }
 
-    public float getStrokewidth() {
-        return strokewidth;
+    public double getScaleX() {
+        return scaleX;
     }
 
-    public void setStrokewidth(float strokewidth) {
-        this.strokewidth = strokewidth;
+    public void setScaleX(double scaleX) {
+        this.scaleX = scaleX;
     }
 
-    public float getScalex() {
-        return scalex;
+    public double getScaleY() {
+        return scaleY;
     }
 
-    public void setScalex(float scalex) {
-        this.scalex = scalex;
+    public void setScaleY(double scaleY) {
+        this.scaleY = scaleY;
     }
 
-    public float getScaley() {
-        return scaley;
-    }
-
-    public void setScaley(float scaley) {
-        this.scaley = scaley;
-    }
-
-    public float getRotation_angle() {
+    public double getRotation_angle() {
         return rotation_angle;
     }
 
-    public void setRotation_angle(float rotation_angle) {
+    public void setRotation_angle(double rotation_angle) {
         this.rotation_angle = rotation_angle;
     }
 
@@ -83,11 +91,11 @@ public class Line implements Shape {
         this.fill = fill;
     }
 
-    public String gettype() {
+    public String getType() {
         return type;
     }
 
-    public void settype(String type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -103,7 +111,30 @@ public class Line implements Shape {
         return id;
     }
 
+    @Override
+    public Shape clone() {
+        return new Line(this.points,
+        this.x,
+        this.y ,
+        this.strokeWidth ,
+        this.scaleX ,
+        this.scaleY,
+        this.rotation_angle,
+        this.fill,
+        this.type ,
+        this.stroke,
+        this.id);
+    }
+
     public void setId(int id) {
         this.id = id;
+    }
+
+    public double[] getPoints() {
+        return points;
+    }
+
+    public void setPoints(double[] points) {
+        this.points = points;
     }
 }

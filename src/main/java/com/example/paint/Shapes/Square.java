@@ -1,68 +1,80 @@
 package com.example.paint.Shapes;
 
 public class Square implements Shape {
-    float x,y,length,strokewidth,scalex,scaley,rotation_angle;
+    double x,y,length,strokeWidth,scaleX,scaleY,rotation_angle;
     String fill,type,stroke;
     int id;
 
-    @Override
-    public void draw() {
-        System.out.println("its square");
+    public Square() {
     }
 
-    public float getX() {
+    public Square(double x, double y, double length, double strokeWidth, double scaleX, double scaleY, double rotation_angle, String fill, String type, String stroke, int id) {
+        this.x = x;
+        this.y = y;
+        this.length = length;
+        this.strokeWidth = strokeWidth;
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
+        this.rotation_angle = rotation_angle;
+        this.fill = fill;
+        this.type = type;
+        this.stroke = stroke;
+        this.id = id;
+    }
+
+    public double getX() {
         return x;
     }
 
-    public void setX(float x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    public float getY() {
+    public double getY() {
         return y;
     }
 
-    public void setY(float y) {
+    public void setY(double y) {
         this.y = y;
     }
 
-    public float getLength() {
+    public double getLength() {
         return length;
     }
 
-    public void setLength(float length) {
+    public void setLength(double length) {
         this.length = length;
     }
 
-    public float getStrokewidth() {
-        return strokewidth;
+    public double getStrokeWidth() {
+        return strokeWidth;
     }
 
-    public void setStrokewidth(float strokewidth) {
-        this.strokewidth = strokewidth;
+    public void setStrokeWidth(double strokeWidth) {
+        this.strokeWidth = strokeWidth;
     }
 
-    public float getScalex() {
-        return scalex;
+    public double getScaleX() {
+        return scaleX;
     }
 
-    public void setScalex(float scalex) {
-        this.scalex = scalex;
+    public void setScaleX(double scaleX) {
+        this.scaleX = scaleX;
     }
 
-    public float getScaley() {
-        return scaley;
+    public double getScaleY() {
+        return scaleY;
     }
 
-    public void setScaley(float scaley) {
-        this.scaley = scaley;
+    public void setScaleY(double scaleY) {
+        this.scaleY = scaleY;
     }
 
-    public float getRotation_angle() {
+    public double getRotation_angle() {
         return rotation_angle;
     }
 
-    public void setRotation_angle(float rotation_angle) {
+    public void setRotation_angle(double rotation_angle) {
         this.rotation_angle = rotation_angle;
     }
 
@@ -74,11 +86,11 @@ public class Square implements Shape {
         this.fill = fill;
     }
 
-    public String gettype() {
+    public String getType() {
         return type;
     }
 
-    public void settype(String type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -90,11 +102,40 @@ public class Square implements Shape {
         this.stroke = stroke;
     }
 
+
+
     public int getId() {
         return id;
+    }
+
+    @Override
+    public Shape clone() {
+        return new Square(this.x, 
+        this.y,
+        this.length,
+        this.strokeWidth,
+        this.scaleX ,
+        this.scaleY ,
+        this.rotation_angle,
+        this.fill,
+        this.type,
+        this.stroke,
+        this.id);
     }
 
     public void setId(int id) {
         this.id = id;
     }
+
+    @Override
+    public void draw() {
+        System.out.println("its square");
+    }
+
+    @Override
+    public void settype(String s) {
+        this.type=s;
+    }
+
+
 }

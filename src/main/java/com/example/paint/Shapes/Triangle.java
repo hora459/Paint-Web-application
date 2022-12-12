@@ -3,68 +3,101 @@ package com.example.paint.Shapes;
 import com.example.paint.Shapes.Shape;
 
 public class Triangle implements Shape {
-    float x,y,sides,radius,scalex,scaley,strokeWidth;
-    String stroke,type;
+    double x,y,sides,radius,scaleX,scaleY,strokeWidth,rotation_angle;
+    String stroke,type,fill;
     int id;
+
+    public Triangle() {
+    }
+
+    public Triangle(double x, double y, double sides, double radius, double scaleX, double scaleY, double strokeWidth, double rotation_angle, String stroke, String type, String fill, int id) {
+        this.x = x;
+        this.y = y;
+        this.sides = sides;
+        this.radius = radius;
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
+        this.strokeWidth = strokeWidth;
+        this.rotation_angle = rotation_angle;
+        this.stroke = stroke;
+        this.type = type;
+        this.fill = fill;
+        this.id = id;
+    }
+
     @Override
     public void draw() {
         System.out.println("its triangle");
     }
 
-    public float getX() {
+    @Override
+    public void settype(String s) {
+        this.type=s;
+    }
+
+
+    public double getX() {
         return x;
     }
 
-    public void setX(float x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    public float getY() {
+    public double getY() {
         return y;
     }
 
-    public void setY(float y) {
+    public void setY(double y) {
         this.y = y;
     }
 
-    public float getSides() {
+    public double getSides() {
         return sides;
     }
 
-    public void setSides(float sides) {
+    public void setSides(double sides) {
         this.sides = sides;
     }
 
-    public float getRadius() {
+    public double getRadius() {
         return radius;
     }
 
-    public void setRadius(float radius) {
+    public void setRadius(double radius) {
         this.radius = radius;
     }
 
-    public float getScalex() {
-        return scalex;
+    public double getScaleX() {
+        return scaleX;
     }
 
-    public void setScalex(float scalex) {
-        this.scalex = scalex;
+    public void setScaleX(double scaleX) {
+        this.scaleX = scaleX;
     }
 
-    public float getScaley() {
-        return scaley;
+    public double getScaleY() {
+        return scaleY;
     }
 
-    public void setScaley(float scaley) {
-        this.scaley = scaley;
+    public void setScaleY(double scaleY) {
+        this.scaleY = scaleY;
     }
 
-    public float getStrokeWidth() {
+    public double getStrokeWidth() {
         return strokeWidth;
     }
 
-    public void setStrokeWidth(float strokeWidth) {
+    public void setStrokeWidth(double strokeWidth) {
         this.strokeWidth = strokeWidth;
+    }
+
+    public double getRotation_angle() {
+        return rotation_angle;
+    }
+
+    public void setRotation_angle(double rotation_angle) {
+        this.rotation_angle = rotation_angle;
     }
 
     public String getStroke() {
@@ -75,11 +108,11 @@ public class Triangle implements Shape {
         this.stroke = stroke;
     }
 
-    public String gettype() {
+    public String getType() {
         return type;
     }
 
-    public void settype(String type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -87,7 +120,31 @@ public class Triangle implements Shape {
         return id;
     }
 
+    @Override
+    public Shape clone() {
+        return new Triangle(this.x,
+        this.y,
+        this.sides,
+        this.radius,
+        this.scaleX,
+        this.scaleY,
+        this.strokeWidth,
+        this.rotation_angle,
+        this.stroke,
+        this.type,
+        this.fill,
+        this.id);
+    }
+
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getFill() {
+        return fill;
+    }
+
+    public void setFill(String fill) {
+        this.fill = fill;
     }
 }
