@@ -27,7 +27,7 @@ public class Ellipse implements Shape {
 
     @Override
     public void draw() {
-        System.out.println("its ellipse");
+        System.out.println("its rectangle number : "+id);
     }
 
     @Override

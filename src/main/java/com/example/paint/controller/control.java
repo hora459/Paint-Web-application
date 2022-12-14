@@ -35,39 +35,39 @@ public class control{
     private Map<Integer,Object>cur=new HashMap<>();
     private Stack<Map<Integer,Object>> u_object=new Stack<>();
     private Stack<Map<Integer,Object>> r_object=new Stack<>();
-    Ifactory factory=new ShapeFactory();
+    private Ifactory factory=new ShapeFactory();
     @RequestMapping( value = "/add/{type}/{id}",method = RequestMethod.POST)
     @ResponseBody
-    public Stack<Map<Integer,Object>> addshape(@RequestBody String  inputData , @PathVariable String type, @PathVariable int id){
-
+    public Result addshape(@RequestBody String  inputData , @PathVariable String type, @PathVariable int id){
         JSONObject jsonObj = new JSONObject(inputData);
-        System.out.println(jsonObj);
         Shape shape =factory.getshape(jsonObj,type);
         shape.settype(type);
+        shape.setId(id);
         undo.push(id);
-        Map<Integer,Object>new_state=new HashMap<>();
         cur.put(id,shape);
+        Map<Integer,Object>new_state=new HashMap<>();
         new_state.putAll(cur);
         u_object.push(new_state);
         r_object.clear();
         redo.clear();
-        return u_object;
+        return new Result("Shape "+type+" with id : "+id+"created successfully",true);
     }
     @RequestMapping( value = "/modify/{type}/{id}",method = RequestMethod.POST)
     @ResponseBody
-    public Stack<Map<Integer,Object>> modifysape(@RequestBody String  inputData , @PathVariable String type, @PathVariable int id){
+    public Result modifysape(@RequestBody String  inputData , @PathVariable String type, @PathVariable int id){
         org.json.JSONObject jsonObj = new JSONObject(inputData);
         Shape shape =factory.getshape(jsonObj,type);
         shape.settype(type);
         undo.push(id);
         Map<Integer,Object>mod= new HashMap<>();
         mod.putAll(u_object.peek());
-        cur.replace(id,shape);
-        mod.replace(id,shape);
+        Object old=mod.get(id);
+        cur.replace(id,old,shape);
+        mod.replace(id,old,shape);
         u_object.push(mod);
         r_object.clear();
         redo.clear();
-        return u_object;
+        return new Result("Shape "+type+" with id : "+id+"modified successfully",true);
     }
     @RequestMapping( value = "/delete/{id}",method = RequestMethod.POST)
     @ResponseBody
@@ -105,14 +105,12 @@ public class control{
             return null;
         Object obj;
         obj=r_object.peek().get(redo.peek());
-        cur.put(redo.peek(),r_object.peek());
+        cur.put(redo.peek(),r_object.peek().get(redo.peek()));
         Map<Integer, Object> map = new HashMap<>();
         map.putAll(r_object.pop());
         u_object.push(map);
         int i=redo.pop();
         undo.push(i);
-
-
         return u_object ;
     }
     @RequestMapping( value = "/save/{t}",method = RequestMethod.POST)
@@ -195,6 +193,24 @@ public class control{
         return mp;
     }
 
+    @RequestMapping(value = "/clone/{id}/{id1}", method = RequestMethod.POST)
+    @ResponseBody
+    public Shape clone(@PathVariable int id,@PathVariable int id1){
+        Map<Integer,Object>new_map=new HashMap<>();
+        Shape shape= (Shape) u_object.peek().get(id);
+        Shape cloned=shape.clone();
+        cloned.settype(shape.getType());
+        cloned.setId(id1);
+        cloned.setX(shape.getX()+30);
+        cloned.setY(shape.getY()+30);
+        cur.put(id1,cloned);
+        new_map.putAll(cur);
+        u_object.push(new_map);
+        undo.push(id1);
+        r_object.clear();
+        redo.clear();
+        return cloned;
+    }
     @RequestMapping(value = "/restart", method = RequestMethod.POST)
     @ResponseBody
     public Result restart() {
@@ -204,23 +220,6 @@ public class control{
         undo.clear();
         redo.clear();
         return new Result("The app is restarted",true);
-    }
-    @RequestMapping(value = "/clone/{id}/{id1}", method = RequestMethod.POST)
-    @ResponseBody
-    public Shape clone(@PathVariable int id,@PathVariable int id1){
-        Shape shape= (Shape) cur.get(id);
-        System.out.println(id1);
-        Shape cloned=shape.clone();
-        cloned.setId(id1);
-        cloned.setX(cloned.getX()+50);
-        cloned.setY(cloned.getY()+50);
-        System.out.println(cloned);
-        cur.put(id1,cloned);
-        u_object.push(cur);
-        undo.push(id1);
-        redo.clear();
-        r_object.clear();
-        return cloned;
     }
 
 

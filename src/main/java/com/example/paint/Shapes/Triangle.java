@@ -27,7 +27,7 @@ public class Triangle implements Shape {
 
     @Override
     public void draw() {
-        System.out.println("its triangle");
+        System.out.println("its triangle number : "+id);
     }
 
     @Override
